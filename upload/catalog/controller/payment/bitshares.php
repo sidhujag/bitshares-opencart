@@ -75,10 +75,10 @@ class ControllerPaymentBitShares extends Controller
 
         $order    = $this->model_checkout_order->getOrder($this->session->data['order_id']);
         $price    = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-        $asset    = 'Bit'.$order['currency_code'];
+        $currency    = $order['currency_code'];
         $account  = $this->config->get($this->payment_module_name.'_user_account');
         $wallet   = $this->config->get($this->payment_module_name.'_user_wallet');
-        $response = btsCreateInvoice($account, $wallet, $order['order_id'], $price, $asset);
+        $response = btsCreateInvoice($account, $wallet, $order['order_id'], $price, $currency);
 
         $this->model_checkout_order->confirm($order['order_id'], $this->config->get($this->payment_module_name.'_invalid_status_id'), $this->language->get('text_waiting').'. Please use the code <a href="'.$response['url'].'"><b>'.$response['orderEHASH'].'</b></a> in the memo of your transaction so we can track payments towards your order', true);
         if(array_key_exists('error', $response))
@@ -106,7 +106,7 @@ class ControllerPaymentBitShares extends Controller
 			$openOrders = $this->model_payment_bitshares->getOpenOrders();
 			foreach ($openOrders as $order) {
 				$order['total'] = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-				$order['asset'] = 'Bit'.$order['currency_code'];
+				
 				array_push($openOrderList,$order);
 				echo 'Order: ' . $order['order_id'] . '<br>';
 			}

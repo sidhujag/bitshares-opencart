@@ -121,10 +121,25 @@ function btsCreateInvoice($account, $walletName, $orderId, $price, $asset)
   $response['orderEHASH'] = $memoHash;
 	return $response;
 }
-
-function btsCreatePaymentURL($account, $price, $asset, $memoHash)
+function btsGetAssetNameById($assetId, $rpcUser, $rpcPass, $rpcPort)
 {
-  return 'bts:'.$account.'/transfer/amount/'.$price.'/asset/'.$asset.'/memo/E-HASH:'.$memoHash;
+	$post_string = '{"method": "blockchain_get_asset", "params": ["'.$assetId.'"], "id": "0"}';
+	$response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);
+
+  if(array_key_exists('error', $response))
+  {
+
+	return "";
+  }
+  return $response['result']['symbol'];
+}
+function btsCreatePaymentURL($account, $price, $currency, $memoHash)
+{
+  return 'bts:'.$account.'/transfer/amount/'.$price.'/asset/'.btsCurrencyToAsset($currency).'/memo/E-HASH:'.$memoHash;
+}
+function btsCurrencyToAsset($currency)
+{
+  return 'Bit'.$currency;
 }
 /**
  * Call from your notification handler to convert $_POST data to an object containing invoice data
@@ -137,6 +152,7 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
 {
    $ret = array();
    $response =  btsGetTransactions($orderList, $walletName, $rpcUser, $rpcPass, $rpcPort);
+   
    if(array_key_exists('error', $response))
    {
     return $response;
@@ -144,25 +160,36 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
     foreach ($orderList as $order) {
       $orderId = $order['order_id'];
       $priceToPay = $order['total'];
-      $asset = $order['asset'];
+      $asset = btsCurrencyToAsset($order['currency_code']);
       $orderTime = strtotime($order['date_added']);
+
       $orderEHASH = btsCreateEHASH($account, $walletName, $orderId, $priceToPay, $asset);
       $accumulatedAmountPaid = 0;
-      if(!array_key_exists('data', $response))
+      if(!array_key_exists('result', $response))
       {
         continue;
       }
-      foreach($response['data'] as $txinfo)
+	
+      foreach($response['result'] as $txinfo)
       {
-        $txTime = strtotime($txinfo['received_time']);
+        
         // make sure the order was placed before it was paid on the blockchain, sanity check incase hash's match but tx is for wrong order.
         // also make sure this tx is confirmed on the blockchain before processing it
-        if($orderTime < $txTime && $txinfo['is_confirmed'] == true)
+        if($txinfo['is_confirmed'] == true)
         {
+	
           foreach($txinfo['ledger_entries'] as $tx) {
+	
+	          //$txTime = strtotime($tx['timestamp']);
+            // echo 'time: ' . $txTime;	
             $toaccount = $tx['to_account'];
-            $accumulatedAmountPaid += $tx['amount'];
+	
+	          $txSymbol = btsGetAssetNameById($tx['amount']['asset_id'], $rpcUser, $rpcPass, $rpcPort);
             $memo = $tx['memo'];
+	          if($txSymbol != $asset)
+		        {
+			        continue;
+		        }
             // sanity check, tx to account should match your configured account in admin settings
             if($toaccount != $account)
             {
@@ -173,39 +200,59 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
             {
               continue;
             }
-            $ret['order_id'] = $orderId;
-            $ret['asset'] = $asset;
-            $ret['amountReceived'] = $accumulatedAmountPaid;
-            $ret['total'] = $priceToPay;
-            $ret['orderEHASH'] = $orderEHASH;
-            $ret['url'] = btsCreatePaymentURL($account, $priceToPay, $asset, $orderEHASH);
-            if($accumulatedAmountPaid > 0)
-            {
-              // payment within 5 units of the price, ie: price = 5 BitUSD, overpayment is when 11 BitUSD is received or more.
-              if($accumulatedAmountPaid > ($priceToPay+5))
-              {
-                $ret['status'] = 'overpayment';
-              }
-              else if($accumulatedAmountPaid >= $priceToPay)
-              {
-                $ret['status'] = 'complete';
-              }
-              else
-              {
-                $ret['status'] = 'processing';
-              }
-            }
-            // sanity incase you somehow paid 0
-            else
-            {
-              $ret['status'] = 'processing';
-            }
+            $accumulatedAmountPaid += $tx['amount']['amount'];
+            
           }
+        }
+        $ret['order_id'] = $orderId;
+        $ret['asset'] = $asset;
+        $ret['amountReceived'] = $accumulatedAmountPaid;
+        $ret['total'] = $priceToPay;
+        $ret['orderEHASH'] = $orderEHASH;
+        $ret['url'] = btsCreatePaymentURL($account, $priceToPay, $asset, $orderEHASH);
+        if($accumulatedAmountPaid > 0)
+        {
+          // payment within 5 units of the price, ie: price = 5 BitUSD, overpayment is when 11 BitUSD is received or more.
+          if($accumulatedAmountPaid > ($priceToPay+5))
+          {
+            $ret['status'] = 'overpayment';
+          }
+          else if($accumulatedAmountPaid >= $priceToPay)
+          {
+            $ret['status'] = 'complete';
+          }
+          else
+          {
+            $ret['status'] = 'processing';
+          }
+        }
+        // sanity incase you somehow paid 0
+        else
+        {
+          $ret['status'] = 'processing';
         }
       }  
     }  
    return $ret;
 }
+function btsValidateRPC($walletName, $account, $rpcUser, $rpcPass, $rpcPort)
+{
+  if(!$walletName || $walletName == '')
+    $walletName = 'default';
+	$post_string = '{"method": "wallet_open", "params": ["'.$walletName.'"], "id": "0"}';
+	$response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);
+  if(!array_key_exists('error', $response))
+  {
+    $post_string = '{"method": "wallet_account_balance", "params": ["'.$account.'"], "id": "0"}';
+	  $response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);  
+ 	  
+    $post_string = '{"method": "wallet_close", "params": [], "id": "0"}';
+	  btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);
+  }
+  
+  return $response;
+}
+
 function btsValidateRPC($walletName, $account, $rpcUser, $rpcPass, $rpcPort)
 {
   if(!$walletName || $walletName == '')
