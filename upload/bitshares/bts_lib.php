@@ -216,6 +216,7 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
           if($accumulatedAmountPaid > ($priceToPay+5))
           {
             $ret['status'] = 'overpayment';
+            $ret['amountOverpaid']=($accumulatedAmountPaid-$priceToPay);
           }
           else if($accumulatedAmountPaid >= $priceToPay)
           {
@@ -224,6 +225,7 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
           else
           {
             $ret['status'] = 'processing';
+            $ret['url']=btsCreatePaymentURL($account,($priceToPay-$accumulatedAmountPaid),$asset,$orderEHASH);
           }
         }
         // sanity incase you somehow paid 0
@@ -253,23 +255,6 @@ function btsValidateRPC($walletName, $account, $rpcUser, $rpcPass, $rpcPort)
   return $response;
 }
 
-function btsValidateRPC($walletName, $account, $rpcUser, $rpcPass, $rpcPort)
-{
-  if(!$walletName || $walletName == '')
-    $walletName = 'default';
-	$post_string = '{"method": "wallet_open", "params": ["'.$walletName.'"], "id": "0"}';
-	$response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);
-  if(!array_key_exists('error', $response))
-  {
-    $post_string = '{"method": "wallet_account_balance", "params": ["'.$account.'"], "id": "0"}';
-	  $response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);  
- 	  
-    $post_string = '{"method": "wallet_close", "params": [], "id": "0"}';
-	  btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);
-  }
-  
-  return $response;
-}
 /**
  *
  * @param string $invoiceId

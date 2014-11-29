@@ -138,7 +138,7 @@ class ControllerPaymentBitShares extends Controller
 						break;
 					case 'overpayment':
 						$order_id = $responseOrder['order_id'];
-						$comment = $this->language->get('text_confirmed'). '. There was an overpayment of '.$responseOrder['overpaidAmount'].' '.$responseOrder['asset']. ' Please contact us for a refund of the overpayment';
+						$comment = $this->language->get('text_confirmed'). '. There was an overpayment of '.$responseOrder['amountOverpaid'].' '.$responseOrder['asset']. ' Please contact us for a refund of the overpayment';
 						$this->model_checkout_order->update($order_id, $this->config->get($this->payment_module_name.'_confirmed_status_id'), $comment, true);
 						break;						
 						
