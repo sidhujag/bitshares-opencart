@@ -139,6 +139,10 @@ function btsCreatePaymentURL($account, $price, $currency, $memoHash)
 }
 function btsCurrencyToAsset($currency)
 {
+  if($currency == 'BTS')
+     return $currency;
+  if(strlen($currency) > 3 && strncmp($currency,'bit', 3) == 0 || strncmp($currency, 'Bit', 3) == 0)
+     return 'Bit'.substr($currency, 3);
   return 'Bit'.$currency;
 }
 /**
