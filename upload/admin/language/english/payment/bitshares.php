@@ -42,6 +42,7 @@ $_['help_user_account'] = "ie: 'bobsmith'";
 $_['help_rpc_user'] = "Set this in your Bitshares config or via console in your Bitshares Wallet";
 $_['help_rpc_pass'] = "Set this in your Bitshares config or via console in your Bitshares Wallet";
 $_['help_rpc_port'] = "Set this in your Bitshares config or via console in your Bitshares Wallet";
+$_['help_demo'] = "Demo mode allows you to pay for items in any asset ie: 100 BTS for items sold in $100 USD/EUR/GBP etc, do not use in real sites. Enable to demo/test plugin functionality. ";
 $_['text_user_wallet'] = "Bitshares user wallet name";
 $_['text_user_account'] = "Bitshares user account name";
 $_['text_rpc_user'] = "RPC user setting(--rpcuser)";
@@ -53,7 +54,7 @@ $_['entry_confirmed_status']  = 'Confirmed Status:';
 $_['entry_processing_status'] = 'Processing Status:';
 $_['entry_invalid_status']    = 'Invalid Status:';
 $_['entry_status']            = 'Status:';
-
+$_['demo_status']             = 'Demo Mode:';
 
 // Error
 $_['error_permission'] = 'Warning: You do not have permission to modify bitshares payment module.';

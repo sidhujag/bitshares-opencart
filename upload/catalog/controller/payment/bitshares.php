@@ -117,7 +117,7 @@ class ControllerPaymentBitShares extends Controller
 			$rpcPass    = $this->config->get($this->payment_module_name.'_rpc_pass');
 			$rpcPort    = $this->config->get($this->payment_module_name.'_rpc_port');
 			// sync up orders with your blockchain wallet
-			$response   = btsVerifyOpenOrders($openOrderList, $account, $walletName, $rpcUser, $rpcPass, $rpcPort);
+			$response   = btsVerifyOpenOrders($openOrderList, $account, $walletName, $rpcUser, $rpcPass, $rpcPort, $this->config->get($this->payment_module_name.'_demo'));
 			if(array_key_exists('error', $response))
 			{
 				$log->write('CrobJob error: ' .$response['error']);

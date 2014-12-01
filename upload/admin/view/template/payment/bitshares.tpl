@@ -57,8 +57,21 @@
               <option value="1"><?php echo $text_enabled; ?></option>
               <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
               <?php } ?>
-            </select></td>
-        </tr>        
+            </select></td>       
+        </tr> 
+        <tr>
+          <td><?php echo $demo_status; ?><br />
+                <span class="help"><?php echo $help_demo ?></span></td>        
+           <td><select name="bitshares_demo"> 
+              <?php if ($bitshares_demo) { ?>
+              <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+              <option value="0"><?php echo $text_disabled; ?></option>
+              <?php } else { ?>
+              <option value="1"><?php echo $text_enabled; ?></option>
+              <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+              <?php } ?>
+            </select></td> 
+          </tr>
           <tr>
             <td><?php echo $entry_processing_status; ?></td>
             <td><select name="bitshares_processing_status_id">

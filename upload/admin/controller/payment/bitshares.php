@@ -115,6 +115,7 @@ class ControllerPaymentBitShares extends Controller
         $this->data['entry_processing_status'] = $this->language->get('entry_processing_status');
         $this->data['entry_invalid_status']    = $this->language->get('entry_invalid_status');
         $this->data['entry_status']            = $this->language->get('entry_status');
+        $this->data['demo_status']            = $this->language->get('demo_status');
         $this->data['button_save']             = $this->language->get('button_save');
         $this->data['button_cancel']           = $this->language->get('button_cancel');
         $this->data['tab_general']             = $this->language->get('tab_general');
@@ -134,7 +135,7 @@ class ControllerPaymentBitShares extends Controller
 		$this->data['help_rpc_user'] = $this->language->get('help_rpc_user');
 		$this->data['help_rpc_pass'] = $this->language->get('help_rpc_pass');
 		$this->data['help_rpc_port'] = $this->language->get('help_rpc_port');		
-
+		$this->data['help_demo'] = $this->language->get('help_demo');
         $this->data['breadcrumbs']   = array();
         $this->data['breadcrumbs'][] = array(
             'text'      => $this->language->get('text_home'),
@@ -196,7 +197,14 @@ class ControllerPaymentBitShares extends Controller
         {
             $this->data[$this->payment_module_name.'_status'] = $this->config->get($this->payment_module_name.'_status');
         }
-
+        if (isset($this->request->post[$this->payment_module_name.'_demo']))
+        {
+            $this->data[$this->payment_module_name.'_status'] = $this->request->post[$this->payment_module_name.'_demo'];
+        }
+        else
+        {
+            $this->data[$this->payment_module_name.'_demo'] = $this->config->get($this->payment_module_name.'_demo');
+        }
    
 		if (isset($this->request->post[$this->payment_module_name.'_cron_job_token'])) {
 			$this->data[$this->payment_module_name.'_cron_job_token'] = $this->request->post[$this->payment_module_name.'_cron_job_token'];

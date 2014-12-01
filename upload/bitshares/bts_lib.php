@@ -152,7 +152,7 @@ function btsCurrencyToAsset($currency)
  *
  * @return array
  */
-function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPass, $rpcPort)
+function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPass, $rpcPort, $demoMode)
 {
    $retArray = array();
    $response =  btsGetTransactions($orderList, $walletName, $rpcUser, $rpcPass, $rpcPort);
@@ -191,7 +191,7 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
 	
 	          $txSymbol = btsGetAssetNameById($tx['amount']['asset_id'], $rpcUser, $rpcPass, $rpcPort);
             $memo = $tx['memo'];
-	          if($txSymbol != $asset)
+	          if($txSymbol != $asset && !$demoMode)
 		        {
 			        continue;
 		        }
