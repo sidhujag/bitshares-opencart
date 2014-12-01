@@ -154,7 +154,7 @@ function btsCurrencyToAsset($currency)
  */
 function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPass, $rpcPort)
 {
-   $ret = array();
+   $retArray = array();
    $response =  btsGetTransactions($orderList, $walletName, $rpcUser, $rpcPass, $rpcPort);
    
    if(array_key_exists('error', $response))
@@ -204,42 +204,45 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
             {
               continue;
             }
-            $accumulatedAmountPaid += $tx['amount']['amount'];
+            $accumulatedAmountPaid += ($tx['amount']['amount']/100000);
             
           }
         }
+      }  
+      if($accumulatedAmountPaid > 0)
+      {
+	      $ret = array();
+  	
         $ret['order_id'] = $orderId;
         $ret['asset'] = $asset;
         $ret['amountReceived'] = $accumulatedAmountPaid;
         $ret['total'] = $priceToPay;
         $ret['orderEHASH'] = $orderEHASH;
-        $ret['url'] = btsCreatePaymentURL($account, $priceToPay, $asset, $orderEHASH);
-        if($accumulatedAmountPaid > 0)
+        
+        // payment within 5 units of the price, ie: price = 5 BitUSD, overpayment is when 11 BitUSD is received or more.
+        if($accumulatedAmountPaid > ($priceToPay+5))
         {
-          // payment within 5 units of the price, ie: price = 5 BitUSD, overpayment is when 11 BitUSD is received or more.
-          if($accumulatedAmountPaid > ($priceToPay+5))
-          {
-            $ret['status'] = 'overpayment';
-            $ret['amountOverpaid']=($accumulatedAmountPaid-$priceToPay);
-          }
-          else if($accumulatedAmountPaid >= $priceToPay)
-          {
-            $ret['status'] = 'complete';
-          }
-          else
-          {
-            $ret['status'] = 'processing';
-            $ret['url']=btsCreatePaymentURL($account,($priceToPay-$accumulatedAmountPaid),$asset,$orderEHASH);
-          }
+          $ret['status'] = 'overpayment';
+          $ret['amountOverpaid']=($accumulatedAmountPaid-$priceToPay);
         }
-        // sanity incase you somehow paid 0
+        else if($accumulatedAmountPaid >= $priceToPay)
+        {
+          $ret['status'] = 'complete';
+        }
         else
         {
           $ret['status'] = 'processing';
+          $ret['url']=btsCreatePaymentURL($account,($priceToPay-$accumulatedAmountPaid),$asset,$orderEHASH);
         }
-      }  
-    }  
-   return $ret;
+      
+        array_push($retArray, $ret);
+     }
+    }
+
+
+   
+   return $retArray;
+
 }
 function btsValidateRPC($walletName, $account, $rpcUser, $rpcPass, $rpcPort)
 {
