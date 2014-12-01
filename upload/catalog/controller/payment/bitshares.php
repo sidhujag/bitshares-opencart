@@ -133,8 +133,14 @@ class ControllerPaymentBitShares extends Controller
 						break;
 					case 'processing':
 						$order_id = $responseOrder['order_id'];
-						$comment = $responseOrder['amountReceived'].' '.$responseOrder['asset'] . ' received. '. ($responseOrder['total']-$responseOrder['amountReceived']).' '.$responseOrder['asset'] . ' remaining. Reminder, use code <a href="'.$response['url'].'"><b>'.$response['orderEHASH'].'</b></a> in the memo of your transactions.';
-						$this->model_checkout_order->update($order_id, $this->config->get($this->payment_module_name.'_processing_status_id'));
+						
+						
+						$comment = $responseOrder['amountReceived'].' '.$responseOrder['asset'] . ' received, '. ($responseOrder['total']-$responseOrder['amountReceived']).' '.$responseOrder['asset'] . ' remaining. Reminder, use code <a href="'.$responseOrder['url'].'"><b>'.$responseOrder['orderEHASH'].'</b></a> in the memo of your transactions.';
+						$orderComment = $this->model_payment_bitshares->findOrderComment($order_id, $comment);
+						if(strlen($orderComment) <= 0)
+						{
+							$this->model_checkout_order->update($order_id, $this->config->get($this->payment_module_name.'_processing_status_id'), $comment, true);
+						}
 						break;
 					case 'overpayment':
 						$order_id = $responseOrder['order_id'];

@@ -83,9 +83,9 @@ function btsCurl($url, $post, $rpcUser, $rpcPass, $rpcPort)
 	curl_close($curl);
 	return $response;
 }
-function btsCreateEHASH($account, $walletName, $orderId, $price, $asset)
+function btsCreateEHASH($account, $walletName, $orderId, $price, $currency)
 {
-  $string = $account.$walletName.$orderId.$price.$asset.'OpenCart1.5';
+  $string = $account.$walletName.$orderId.$price.btsCurrencyToAsset($currency).'OpenCart1.5';
   return substr(md5($string), 0, 12);
 }
 
@@ -114,10 +114,10 @@ function btsCreateEHASH($account, $walletName, $orderId, $price, $asset)
  *
  * @return array
  */
-function btsCreateInvoice($account, $walletName, $orderId, $price, $asset)
+function btsCreateInvoice($account, $walletName, $orderId, $price, $currency)
 {
-  $memoHash = btsCreateEHASH($account, $walletName, $orderId, $price, $asset);
-	$response = array('url' => btsCreatePaymentURL($account, $price, $asset, $memoHash));
+  $memoHash = btsCreateEHASH($account, $walletName, $orderId, $price,$currency);
+	$response = array('url' => btsCreatePaymentURL($account, $price, $currency, $memoHash));
   $response['orderEHASH'] = $memoHash;
 	return $response;
 }
@@ -164,10 +164,11 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
     foreach ($orderList as $order) {
       $orderId = $order['order_id'];
       $priceToPay = $order['total'];
-      $asset = btsCurrencyToAsset($order['currency_code']);
+      $currency = $order['currency_code'];
+      $asset = btsCurrencyToAsset($currency);
       $orderTime = strtotime($order['date_added']);
 
-      $orderEHASH = btsCreateEHASH($account, $walletName, $orderId, $priceToPay, $asset);
+      $orderEHASH = btsCreateEHASH($account, $walletName, $orderId, $priceToPay, $currency);
       $accumulatedAmountPaid = 0;
       if(!array_key_exists('result', $response))
       {
@@ -223,7 +224,7 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
         if($accumulatedAmountPaid > ($priceToPay+5))
         {
           $ret['status'] = 'overpayment';
-          $ret['amountOverpaid']=($accumulatedAmountPaid-$priceToPay);
+          $ret['amountOverpaid'] = ($accumulatedAmountPaid-$priceToPay);
         }
         else if($accumulatedAmountPaid >= $priceToPay)
         {
@@ -232,7 +233,7 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
         else
         {
           $ret['status'] = 'processing';
-          $ret['url']=btsCreatePaymentURL($account,($priceToPay-$accumulatedAmountPaid),$asset,$orderEHASH);
+          $ret['url'] = btsCreatePaymentURL($account,($priceToPay-$accumulatedAmountPaid),$currency,$orderEHASH);
         }
       
         array_push($retArray, $ret);

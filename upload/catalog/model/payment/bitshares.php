@@ -28,8 +28,16 @@ class ModelPaymentBitShares extends Model
 	// invalid status was defined for each order as it was submitted(default), if it is overrided by user we don't processs it. (ie: admin cancelled the order for some reason)
 	// also if order is being processed already (partial transfer) then we want to proceed to check to see if user has completed full payment now
 	public function getOpenOrders(){
-		$order_query = $this->db->query("SELECT order_id, total, currency_code, currency_value, date_added FROM `" . DB_PREFIX . "order` WHERE `order_status_id` = " . $this->config->get('bitshares_invalid_status_id') . " OR `order_status_id` = " . $this->config->get('bitshares_processing_status_id'));
+		$order_query = $this->db->query("SELECT order_id, total, currency_code, currency_value, date_added, comment FROM `" . DB_PREFIX . "order` WHERE `order_status_id` = " . $this->config->get('bitshares_invalid_status_id') . " OR `order_status_id` = " . $this->config->get('bitshares_processing_status_id'));
 		return $order_query->rows;
+	}
+	public function findOrderComment($id, $comment)
+	{
+		$order_query = $this->db->query("SELECT `comment` FROM `" . DB_PREFIX . "order_history` WHERE `order_id` = '".$id."' AND `comment` = '".$comment."' LIMIT 1");
+		if($order_query->num_rows) {
+			return $order_query->row['comment'];
+		}
+		return "";
 	}
 	public function updateCronJobRunTime() {
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "setting` WHERE `group` = 'bitshares_checkout' AND `key` = 'bitshares_last_cron_job_run'");
