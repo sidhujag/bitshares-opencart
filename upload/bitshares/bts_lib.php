@@ -221,12 +221,12 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
         $ret['orderEHASH'] = $orderEHASH;
         
         // payment within 5 units of the price, ie: price = 5 BitUSD, overpayment is when 11 BitUSD is received or more.
-        if($accumulatedAmountPaid > ($priceToPay+5))
+        if($accumulatedAmountPaid > ($priceToPay+5.0))
         {
           $ret['status'] = 'overpayment';
           $ret['amountOverpaid'] = ($accumulatedAmountPaid-$priceToPay);
         }
-        else if($accumulatedAmountPaid >= $priceToPay)
+        else if($accumulatedAmountPaid >= ($priceToPay-1.0))
         {
           $ret['status'] = 'complete';
         }

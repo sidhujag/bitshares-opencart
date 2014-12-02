@@ -38,15 +38,15 @@ $_['text_cron_job_token'] = "Secret Token";
 $_['help_cron_job_token'] = "Make this long and hard to guess, don't give it to anyone";
 $_['help_user_wallet'] = "Leave empty for 'default'";
 $_['help_user_account'] = "ie: 'bobsmith'";
-$_['help_rpc_user'] = "Set this in your Bitshares config or via console in your Bitshares Wallet";
-$_['help_rpc_pass'] = "Set this in your Bitshares config or via console in your Bitshares Wallet";
-$_['help_rpc_port'] = "Set this in your Bitshares config or via console in your Bitshares Wallet";
+$_['help_rpc_user'] = "Set this in your Bitshares config or via console in your Bitshares Wallet(--rpcuser)";
+$_['help_rpc_pass'] = "Set this in your Bitshares config or via console in your Bitshares Wallet(--rpcpassword)";
+$_['help_rpc_port'] = "Set this in your Bitshares config or via console in your Bitshares Wallet(--httpport)";
 $_['help_demo'] = "Demo mode allows you to pay for items in any asset ie: 100 BTS for items sold in $100 USD/EUR/GBP etc, do not use in real sites. Enable to demo/test plugin functionality. ";
-$_['text_user_wallet'] = "Bitshares user wallet name";
-$_['text_user_account'] = "Bitshares user account name";
-$_['text_rpc_user'] = "RPC user setting(--rpcuser)";
-$_['text_rpc_pass'] = "RPC password setting(--rpcpassword)";
-$_['text_rpc_port'] = "HTTP RPC port setting(--httpport)";
+$_['text_user_wallet'] = "BTS wallet name:";
+$_['text_user_account'] = "BTS account name:";
+$_['text_rpc_user'] = "RPC user:";
+$_['text_rpc_pass'] = "RPC password:";
+$_['text_rpc_port'] = "HTTP RPC port:";
 
 // Entry
 $_['entry_confirmed_status']  = 'Confirmed Status:';

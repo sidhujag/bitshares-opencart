@@ -129,7 +129,7 @@ class ControllerPaymentBitShares extends Controller
 				{
 					case 'complete':
 						$order_id = $responseOrder['order_id'];
-						$this->model_checkout_order->update($order_id, $this->config->get($this->payment_module_name.'_confirmed_status_id'), $this->language->get('text_confirmed'), true);
+						$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_confirmed_status_id'), $this->language->get('text_confirmed'), true);
 						break;
 					case 'processing':
 						$order_id = $responseOrder['order_id'];
@@ -139,13 +139,13 @@ class ControllerPaymentBitShares extends Controller
 						$orderComment = $this->model_payment_bitshares->findOrderComment($order_id, $comment);
 						if(strlen($orderComment) <= 0)
 						{
-							$this->model_checkout_order->update($order_id, $this->config->get($this->payment_module_name.'_processing_status_id'), $comment, true);
+							$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_processing_status_id'), $comment, true);
 						}
 						break;
 					case 'overpayment':
 						$order_id = $responseOrder['order_id'];
 						$comment = $this->language->get('text_confirmed'). '. There was an overpayment of '.$responseOrder['amountOverpaid'].' '.$responseOrder['asset']. ' Please contact us for a refund of the overpayment';
-						$this->model_checkout_order->update($order_id, $this->config->get($this->payment_module_name.'_confirmed_status_id'), $comment, true);
+						$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_confirmed_status_id'), $comment, true);
 						break;						
 						
 				}
