@@ -36,14 +36,14 @@ class ControllerPaymentBitShares extends Controller
 
     /**
      */
-    protected function index()
+    public function index()
     {
         $this->language->load('payment/'.$this->payment_module_name);
 
-    	$this->data['button_bitshares_confirm'] = $this->language->get('button_bitshares_confirm');
-    	$this->data['button_bitshares_complete'] = $this->language->get('button_bitshares_complete');
+    	$data['button_bitshares_confirm'] = $this->language->get('button_bitshares_confirm');
+    	$data['button_bitshares_complete'] = $this->language->get('button_bitshares_complete');
     	
-		$this->data['continue']              = $this->url->link('checkout/success');
+		$data['continue']              = $this->url->link('checkout/success', '', 'SSL');
 		
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/bitshares.tpl'))
         {
@@ -54,7 +54,7 @@ class ControllerPaymentBitShares extends Controller
 			$this->template = 'default/template/payment/bitshares.tpl';
 		}	
 		
-		$this->render();
+		return $this->load->view($this->template, $data);
 	}
 
     /**
@@ -80,7 +80,7 @@ class ControllerPaymentBitShares extends Controller
         $wallet   = $this->config->get($this->payment_module_name.'_user_wallet');
         $response = btsCreateInvoice($account, $wallet, $order['order_id'], $price, $currency);
 
-        $this->model_checkout_order->confirm($order['order_id'], $this->config->get($this->payment_module_name.'_invalid_status_id'), $this->language->get('text_waiting').'. Please use the code <a href="'.$response['url'].'"><b>'.$response['orderEHASH'].'</b></a> in the memo of your transaction so we can track payments towards your order', true);
+        $this->model_checkout_order->addOrderHistory($order['order_id'], $this->config->get($this->payment_module_name.'_invalid_status_id'), $this->language->get('text_waiting').'. Please use the code <a href="'.$response['url'].'"><b>'.$response['orderEHASH'].'</b></a> in the memo of your transaction so we can track payments towards your order', true);
         if(array_key_exists('error', $response))
         {
             $this->log("communication error");

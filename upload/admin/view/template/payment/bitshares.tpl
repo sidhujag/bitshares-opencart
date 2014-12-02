@@ -1,181 +1,166 @@
-<?php echo $header; ?>
-<?php
-/**
- * The MIT License (MIT)
- * 
- * Copyright (c) 2011-2014 BitShares
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-?>
-
+<?php echo $header; ?><?php echo $column_left; ?>
 <div id="content">
-  <div class="breadcrumb">
-    <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-    <?php echo $breadcrumb['separator']; ?><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a>
-    <?php } ?>
-  </div>
-<?php if ($error_warning) { ?>
-<div class="warning"><?php echo $error_warning; ?></div>
-<?php } ?>
-<?php if ($error) { ?>
-<div class="error"><?php echo $error; ?></div>
-<?php } ?>  
-<div class="box">
-  <div class="left"></div>
-  <div class="right"></div>
-    <div class="heading">
-      <h1><img src="view/image/payment.png" alt="" /> <?php echo $heading_title; ?></h1>
-      <div class="buttons"><a onclick="$('#form').submit();" class="button"><span><?php echo $button_save; ?></span></a><a onclick="location = '<?php echo $cancel; ?>';" class="button"><span><?php echo $button_cancel; ?></span></a></div>
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="bitshares-checkout" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1><?php echo $heading_title; ?></h1>
+      <ul class="breadcrumb">
+        <?php foreach ($breadcrumbs as $breadcrumb) { ?>
+        <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
+        <?php } ?>
+      </ul>
     </div>
-  <div class="content">
-    <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
-      <table class="form">
-        <tr>
-          <td><?php echo $entry_status; ?></td>
-          <td><select name="bitshares_status"> 
-              <?php if ($bitshares_status) { ?>
-              <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
-              <option value="0"><?php echo $text_disabled; ?></option>
-              <?php } else { ?>
-              <option value="1"><?php echo $text_enabled; ?></option>
-              <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
-              <?php } ?>
-            </select></td>       
-        </tr> 
-        <tr>
-          <td><?php echo $demo_status; ?><br />
-                <span class="help"><?php echo $help_demo ?></span></td>        
-           <td><select name="bitshares_demo"> 
-              <?php if ($bitshares_demo) { ?>
-              <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
-              <option value="0"><?php echo $text_disabled; ?></option>
-              <?php } else { ?>
-              <option value="1"><?php echo $text_enabled; ?></option>
-              <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
-              <?php } ?>
-            </select></td> 
-          </tr>
-          <tr>
-            <td><?php echo $entry_processing_status; ?></td>
-            <td><select name="bitshares_processing_status_id">
-                <?php foreach ($order_statuses as $order_status) { ?>
+  </div>
+  <div class="container-fluid">
+    <?php if ($error_warning) { ?>
+    <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    <?php } ?>
+     <?php if ($error) { ?>
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error; ?>
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    <?php } ?>   
+    <div class="alert alert-info"><i class="fa fa-info-circle"></i> <?php echo $text_bitshares_join; ?>
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $text_edit; ?></h3>
+      </div>
+      <div class="panel-body">
+        <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="bitshares-checkout" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status"><?php echo $entry_status; ?></label>
+            <div class="col-sm-10">
+              <select name="bitshares_status" id="input-status" class="form-control">
+                <?php if ($bitshares_status) { ?>
+                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                <option value="0"><?php echo $text_disabled; ?></option>
+                <?php } else { ?>
+                <option value="1"><?php echo $text_enabled; ?></option>
+                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                <?php } ?>
+              </select>
+            </div>
+          </div>        
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="bitshares_user_wallet"><span data-toggle="tooltip" title="<?php echo $help_user_wallet; ?>"><?php echo $text_user_wallet; ?></span></label>
+            <div class="col-sm-10">
+              <input type="text" name="bitshares_user_wallet" value="<?php echo $bitshares_user_wallet; ?>" placeholder="<?php echo $text_user_wallet; ?>" id="input-user-wallet" class="form-control" />
+              </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="bitshares_user_account"><span data-toggle="tooltip" title="<?php echo $help_user_account; ?>"><?php echo $text_user_account; ?></span></label>
+            <div class="col-sm-10">
+              <input type="text" name="bitshares_user_account" value="<?php echo $bitshares_user_account; ?>" placeholder="<?php echo $text_user_account; ?>" id="input-user-account" class="form-control" />
+              </div>
+          </div>
+           <div class="form-group required">
+            <label class="col-sm-2 control-label" for="bitshares_rpc_user"><span data-toggle="tooltip" title="<?php echo $help_rpc_user; ?>"><?php echo $text_rpc_user; ?></span></label>
+            <div class="col-sm-10">
+              <input type="text" name="bitshares_rpc_user" value="<?php echo $bitshares_rpc_user; ?>" placeholder="<?php echo $text_rpc_user; ?>" id="input-rpc-user" class="form-control" />
+              </div>
+          </div> 
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="bitshares_rpc_pass"><span data-toggle="tooltip" title="<?php echo $help_rpc_pass; ?>"><?php echo $text_rpc_pass; ?></span></label>
+            <div class="col-sm-10">
+              <input type="text" name="bitshares_rpc_pass" value="<?php echo $bitshares_rpc_pass; ?>" placeholder="<?php echo $text_rpc_pass; ?>" id="input-rpc-pass" class="form-control" />
+              </div>
+          </div> 
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="bitshares_rpc_port"><span data-toggle="tooltip" title="<?php echo $help_rpc_port; ?>"><?php echo $text_rpc_port; ?></span></label>
+            <div class="col-sm-10">
+              <input type="text" name="bitshares_rpc_port" value="<?php echo $bitshares_rpc_port; ?>" placeholder="<?php echo $text_rpc_port; ?>" id="input-rpc-port" class="form-control" />
+              </div>
+          </div>           
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-mode"><span data-toggle="tooltip" title="<?php echo $help_demo; ?>"><?php echo $entry_demo; ?></span></label>
+            <div class="col-sm-10">
+              <select name="bitshares_demo" id="input-mode" class="form-control">
+                <?php if ($bitshares_demo) { ?>
+                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                <option value="0"><?php echo $text_disabled; ?></option>
+                <?php } else { ?>
+                <option value="1"><?php echo $text_enabled; ?></option>
+                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                <?php } ?>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-order-status"><?php echo $entry_processing_status; ?></label>
+            <div class="col-sm-10">
+              <select name="bitshares_processing_status_id" id="input-order-status" class="form-control">
+                <?php foreach($order_statuses as $order_status) { ?>
                 <?php if ($order_status['order_status_id'] == $bitshares_processing_status_id) { ?>
                 <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
                 <?php } else { ?>
                 <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
                 <?php } ?>
                 <?php } ?>
-              </select></td>
-          </tr>        
-          <tr>
-            <td><?php echo $entry_confirmed_status; ?></td>
-            <td><select name="bitshares_confirmed_status_id">
-                <?php foreach ($order_statuses as $order_status) { ?>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-confirmed-status"><?php echo $entry_confirmed_status; ?></label>
+            <div class="col-sm-10">
+              <select name="bitshares_confirmed_status_id" id="input-confirmed-status" class="form-control">
+                <?php foreach($order_statuses as $order_status) { ?>
                 <?php if ($order_status['order_status_id'] == $bitshares_confirmed_status_id) { ?>
                 <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
                 <?php } else { ?>
                 <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
                 <?php } ?>
                 <?php } ?>
-              </select></td>
-          </tr>
-          <tr>
-            <td><?php echo $entry_invalid_status; ?></td>
-            <td><select name="bitshares_invalid_status_id">
-                <?php foreach ($order_statuses as $order_status) { ?>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-invalid-status"><?php echo $entry_invalid_status; ?></label>
+            <div class="col-sm-10">
+              <select name="bitshares_invalid_status_id" id="input-invalid-status" class="form-control">
+                <?php foreach($order_statuses as $order_status) { ?>
                 <?php if ($order_status['order_status_id'] == $bitshares_invalid_status_id) { ?>
                 <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
                 <?php } else { ?>
                 <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
                 <?php } ?>
                 <?php } ?>
-              </select></td>
-          </tr>
-         
-        <tr>
-            <td>
-                <label for="bitshares_cron_job_token"><?php echo $text_cron_job_token ?></label><br />
-                <span class="help"><?php echo $help_cron_job_token ?></span>
-            </td>
-            <td><input name="bitshares_cron_job_token" value="<?php echo $bitshares_cron_job_token ?>" id="bitshares_cron_job_token" /></td>
-          </tr>
-          <tr>
-            <td>
-                <?php echo $text_cron_job_url ?><br />
-                <span class="help"><?php echo $help_cron_job_url ?></span>
-            </td>
-            <td>
-                <span id="cron-job-url"><?php echo $bitshares_cron_job_url ?></span>
-            </td>
-          </tr>
-          <tr>
-            <td><?php echo $text_last_cron_job_run ?></td>
-            <td><label name="bitshares_last_cron_job_run" id="bitshares_last_cron_job_run"><?php echo $bitshares_last_cron_job_run ?></label></td>
-          </tr>
-        <tr>
-            <td>
-                <label for="bitshares_user_wallet"><?php echo $text_user_wallet ?></label><br />
-                <span class="help"><?php echo $help_user_wallet ?></span>
-            </td>
-            <td><input name="bitshares_user_wallet" value="<?php echo $bitshares_user_wallet ?>" id="bitshares_user_wallet" /></td>
-       </tr> 
-        <tr>
-            <td>
-                <label for="bitshares_user_account"><?php echo $text_user_account ?></label><br />
-                <span class="help"><?php echo $help_user_account ?></span>
-            </td>
-            <td><input name="bitshares_user_account" value="<?php echo $bitshares_user_account ?>" id="bitshares_user_account" /></td>
-       </tr>
-         <tr>
-            <td>
-                <label for="bitshares_rpc_user"><?php echo $text_rpc_user ?></label><br />
-                <span class="help"><?php echo $help_rpc_user ?></span>
-            </td>
-            <td><input name="bitshares_rpc_user" value="<?php echo $bitshares_rpc_user ?>" id="bitshares_rpc_user" /></td>
-       </tr>
-          <tr>
-            <td>
-                <label for="bitshares_rpc_pass"><?php echo $text_rpc_pass ?></label><br />
-                <span class="help"><?php echo $help_rpc_pass ?></span>
-            </td>
-            <td><input name="bitshares_rpc_pass" value="<?php echo $bitshares_rpc_pass ?>" id="bitshares_rpc_pass" /></td>
-       </tr>
-          <tr>
-            <td>
-                <label for="bitshares_rpc_port"><?php echo $text_rpc_port ?></label><br />
-                <span class="help"><?php echo $help_rpc_port ?></span>
-            </td>
-            <td><input name="bitshares_rpc_port" value="<?php echo $bitshares_rpc_port ?>" id="bitshares_rpc_port" /></td>
-       </tr>        
-      </table>
-    </form>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-cron-job-token"><span data-toggle="tooltip" title="<?php echo $help_cron_job_token; ?>"><?php echo $text_cron_job_url; ?></span></label>
+            <div class="col-sm-10">
+              <input type="text" name="bitshares_cron_job_token" value="<?php echo $bitshares_cron_job_token; ?>" id="input-cron-job-token" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-cron-job-url"><?php echo $text_cron_job_url; ?></label>
+            <div class="col-sm-10">
+              <div class="input-group"><span class="input-group-addon"><i class="fa fa-link"></i></span>
+                <input type="text" readonly="readonly" value="<?php echo $cron_job_url; ?>" id="input-cron-job-url" class="form-control" />
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-cron-job-last-run"><?php echo $text_last_cron_job_run; ?></label>
+            <div class="col-sm-10">
+              <input type="text" readonly="readonly" value="<?php echo $cron_job_last_run; ?>" id="input-cron-job-last-run" class="form-control" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-</div>
-</div>
-<script type="text/javascript">
+  <script type="text/javascript">
   <!--
-  
-$('input[name="bitshares_cron_job_token"]').keyup(function(){
-    $('#cron-job-url').html('<?php echo HTTPS_CATALOG ?>index.php?route=payment/bitshares/cron&token=' + $(this).val());
+  $('input[name=\'bitshares_cron_job_token\']').on('keyup', function() {
+    $('#input-cron-job-url').val('<?php echo HTTPS_CATALOG ?>index.php?route=payment/bitshares/cron&token=' + $(this).val());
 });
-
-//-->
-</script>
+//--></script></div>
 <?php echo $footer; ?>

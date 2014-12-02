@@ -28,7 +28,7 @@ class ModelPaymentBitShares extends Model
 	// invalid status was defined for each order as it was submitted(default), if it is overrided by user we don't processs it. (ie: admin cancelled the order for some reason)
 	// also if order is being processed already (partial transfer) then we want to proceed to check to see if user has completed full payment now
 	public function getOpenOrders(){
-		$order_query = $this->db->query("SELECT order_id, total, currency_code, currency_value, date_added FROM `" . DB_PREFIX . "order` WHERE `order_status_id` = " . $this->config->get('bitshares_invalid_status_id') . " OR `order_status_id` = " . $this->config->get('bitshares_processing_status_id'));
+		$order_query = $this->db->query("SELECT `order_id`, `total`, `currency_code`, `currency_value`, `date_added`  FROM `" . DB_PREFIX . "order` WHERE `order_status_id` = '" . $this->config->get('bitshares_invalid_status_id') . "' OR `order_status_id` = '" . $this->config->get('bitshares_processing_status_id')."'");
 		return $order_query->rows;
 	}
 	public function findOrderComment($id, $comment)
@@ -40,8 +40,8 @@ class ModelPaymentBitShares extends Model
 		return "";
 	}
 	public function updateCronJobRunTime() {
-		$this->db->query("DELETE FROM `" . DB_PREFIX . "setting` WHERE `group` = 'bitshares_checkout' AND `key` = 'bitshares_last_cron_job_run'");
-		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` (`store_id`, `group`, `key`, `value`, `serialized`) VALUES (0, 'bitshares_checkout', 'bitshares_last_cron_job_run', NOW(), 0)");
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "setting` WHERE `code` = 'bitshares' AND `key` = 'bitshares_last_cron_job_run'");
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` (`store_id`, `code`, `key`, `value`, `serialized`) VALUES (0, 'bitshares', 'bitshares_last_cron_job_run', NOW(), 0)");
 	}
     /**
      * @param string $address
@@ -68,6 +68,7 @@ class ModelPaymentBitShares extends Model
             $method_data = array( 
                 'code'       => 'bitshares',
                 'title'      => $this->language->get('text_title'),
+                'terms'      => '',
                 'sort_order' => ''
             );
         }

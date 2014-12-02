@@ -25,8 +25,8 @@
 ?>
 
 <div class="buttons">
-  <div class="right"><a id="button-confirm" class="button"><span><?php echo $button_bitshares_confirm; ?></span></a>
-    <a href="index.php?route=checkout/success" id="button-complete" class="button" style="display:none">
+  <div class="pull-right"><input type="button" id="button-confirm" class="btn btn-primary" value="<?php echo $button_bitshares_confirm; ?>" />
+    <a href="index.php?route=checkout/success" id="button-complete" class="btn btn-success" style="display:none">
       <span>
         <?php echo $button_bitshares_complete; ?>
       </span>
@@ -52,31 +52,6 @@ $('#button-confirm').bind('click', function() {
           $('#button-complete').show();
           location = result.url;
           
-        }
-      } catch(e) {
-        alert('JSON parsing error: '+msg);
-      }
-		}		
-	});
-});
-$('#button-complete').bind('click', function() {
-	$.ajax({ 
-		type: 'GET',
-		url: 'index.php?route=payment/bitshares/callback',
-    timeout: (1000 * 45), // 45 seconds
-    error: function() {
-      alert('Error communicating with payment provider.');
-    },
-		success: function(msg) {
-      try {
-        var result = JSON.parse(msg);
-        if(result.error) {
-          alert(result.error);
-        } else {
-          if(result && result.url && result.url.length > 0)
-          {
-           // location = 'index.php?route=checkout/success';
-          }
         }
       } catch(e) {
         alert('JSON parsing error: '+msg);
