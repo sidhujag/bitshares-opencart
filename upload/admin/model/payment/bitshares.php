@@ -26,6 +26,6 @@
 class ModelPaymentBitShares extends Model
 {
 	public function getLastCronJobRunTime() {
-		return $this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `code` = 'bitshares_checkout' AND `key` = 'bitshares_last_cron_job_run'")->row;
+		return $this->db->query("SELECT * FROM `" . DB_PREFIX . "setting` WHERE `code` = 'bitshares' AND `key` = 'bitshares_last_cron_job_run'")->row;
 	}
 }
