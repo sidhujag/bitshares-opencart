@@ -8,12 +8,18 @@ Copy the contents of the upload folder into your OpenCart directory.
 # Configuration
 
 
-1. In the opencart administration under Extensions->Payments, click the "Install"
+1. Run bitshares_client --server --rpcuser=<your rpc user setting> --rpcpass=<your rpc password setting> --httpport=<your http port setting>
+2. type wallet_open <your wallet name, usually default>. This will open you're wallet so you may unlock it.
+3. type wallet_unlock 9999999. This will unlock your wallet so new transactions will be posted to your wallet, which this extension will read every x minutes based on a CRON job (CRON URL available via extension settings).
+4. In the opencart administration under Extensions->Payments, click the "Install"
    link on the Bitshares row.
-2. Also under Extensions->Payments, click the "Edit" link on the Bitshares row.
-3. Configure the extension settings including RPC settings
-4. Set the status to enabled (this activates the bitshares payment extension and 
+5. Also under Extensions->Payments, click the "Edit" link on the Bitshares row.
+6. Configure the extension settings including RPC settings that you used above to start the client.
+7. Set the status to enabled (this activates the bitshares payment extension and 
     enabled shoppers to select the bitshares payment method).
+8. Set up a CRON job to access the CRON job url found in the extension settings. Set it to any desired time interval, based on the size of your server, the better server you have the more frequent the interval can be. It's pretty light-weight you can play with the settings and see how it affects the responsiveness of your site.
+
+
 
 
 # Usage
