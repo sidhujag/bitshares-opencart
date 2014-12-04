@@ -255,9 +255,6 @@ function btsValidateRPC($walletName, $account, $rpcUser, $rpcPass, $rpcPort)
   {
     $post_string = '{"method": "wallet_account_balance", "params": ["'.$account.'"], "id": "0"}';
 	  $response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);  
- 	  
-    $post_string = '{"method": "wallet_close", "params": [], "id": "0"}';
-	  btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);
   }
   
   return $response;
@@ -280,8 +277,6 @@ function btsGetTransactions($orderList, $walletName, $rpcUser, $rpcPass, $rpcPor
 	$post_string = '{"method": "wallet_account_transaction_history", "params": [], "id": "0"}';
 	$response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);	
 	
-	$post_string = '{"method": "wallet_close", "params": [], "id": "0"}';
-	btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);
 	return $response;
 }
 ?>
