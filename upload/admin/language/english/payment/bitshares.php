@@ -36,13 +36,13 @@ $_['text_cron_job_url'] = "Cron Job's URL:";
 $_['help_cron_job_url'] = "Set a cron job to call this URL. Click Save to use this URL.";
 $_['text_cron_job_token'] = "Secret Token";
 $_['help_cron_job_token'] = "Make this long and hard to guess, don't give it to anyone";
-$_['help_user_wallet'] = "Leave empty for 'default'";
+
 $_['help_user_account'] = "ie: 'bobsmith'";
 $_['help_rpc_user'] = "Set this in your Bitshares config or via console in your Bitshares Wallet(--rpcuser)";
 $_['help_rpc_pass'] = "Set this in your Bitshares config or via console in your Bitshares Wallet(--rpcpassword)";
 $_['help_rpc_port'] = "Set this in your Bitshares config or via console in your Bitshares Wallet(--httpport)";
 $_['help_demo'] = "Demo mode allows you to pay for items in any asset ie: 100 BTS for items sold in $100 USD/EUR/GBP etc, do not use in real sites. Enable to demo/test plugin functionality. ";
-$_['text_user_wallet'] = "BTS wallet name:";
+
 $_['text_user_account'] = "BTS account name:";
 $_['text_rpc_user'] = "RPC user:";
 $_['text_rpc_pass'] = "RPC password:";
@@ -57,7 +57,7 @@ $_['entry_demo']             = 'Demo Mode:';
 
 // Error
 $_['error_permission'] = 'Warning: You do not have permission to modify Bitshares module.';
-$_['error_user_wallet'] = 'Error: You must define a Bitshares user wallet so customers can pay you.';
+
 $_['error_user_account'] = 'Error: You must define a Bitshares user account so customers can pay you.';
 $_['error_rpc_user'] = 'Error: You must define a Bitshares RPC user name so this module can authenticate against your running Bitshares client.';
 $_['error_rpc_pass'] = 'Error: You must define a Bitshares RPC password so this module can authenticate against your running Bitshares client.';

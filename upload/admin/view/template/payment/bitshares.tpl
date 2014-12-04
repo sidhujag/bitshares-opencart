@@ -48,12 +48,6 @@
             </div>
           </div>        
           <div class="form-group required">
-            <label class="col-sm-2 control-label" for="bitshares_user_wallet"><span data-toggle="tooltip" title="<?php echo $help_user_wallet; ?>"><?php echo $text_user_wallet; ?></span></label>
-            <div class="col-sm-10">
-              <input type="text" name="bitshares_user_wallet" value="<?php echo $bitshares_user_wallet; ?>" placeholder="<?php echo $text_user_wallet; ?>" id="input-user-wallet" class="form-control" />
-              </div>
-          </div>
-          <div class="form-group required">
             <label class="col-sm-2 control-label" for="bitshares_user_account"><span data-toggle="tooltip" title="<?php echo $help_user_account; ?>"><?php echo $text_user_account; ?></span></label>
             <div class="col-sm-10">
               <input type="text" name="bitshares_user_account" value="<?php echo $bitshares_user_account; ?>" placeholder="<?php echo $text_user_account; ?>" id="input-user-account" class="form-control" />

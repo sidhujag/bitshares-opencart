@@ -83,9 +83,9 @@ function btsCurl($url, $post, $rpcUser, $rpcPass, $rpcPort)
 	curl_close($curl);
 	return $response;
 }
-function btsCreateEHASH($account, $walletName, $orderId, $price, $currency)
+function btsCreateEHASH($account,$orderId, $price, $currency)
 {
-  $string = $account.$walletName.$orderId.$price.btsCurrencyToAsset($currency).'OpenCart1.5';
+  $string = $account.$orderId.$price.btsCurrencyToAsset($currency).'OpenCart1.5';
   return substr(md5($string), 0, 12);
 }
 
@@ -114,9 +114,9 @@ function btsCreateEHASH($account, $walletName, $orderId, $price, $currency)
  *
  * @return array
  */
-function btsCreateInvoice($account, $walletName, $orderId, $price, $currency)
+function btsCreateInvoice($account, $orderId, $price, $currency)
 {
-  $memoHash = btsCreateEHASH($account, $walletName, $orderId, $price,$currency);
+  $memoHash = btsCreateEHASH($account, $orderId, $price,$currency);
 	$response = array('url' => btsCreatePaymentURL($account, $price, $currency, $memoHash));
   $response['orderEHASH'] = $memoHash;
 	return $response;
@@ -152,10 +152,10 @@ function btsCurrencyToAsset($currency)
  *
  * @return array
  */
-function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPass, $rpcPort, $demoMode)
+function btsVerifyOpenOrders($orderList, $account, $rpcUser, $rpcPass, $rpcPort, $demoMode)
 {
    $retArray = array();
-   $response =  btsGetTransactions($orderList, $walletName, $rpcUser, $rpcPass, $rpcPort);
+   $response =  btsGetTransactions($orderList, $rpcUser, $rpcPass, $rpcPort);
    
    if(array_key_exists('error', $response))
    {
@@ -168,7 +168,7 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
       $asset = btsCurrencyToAsset($currency);
       $orderTime = strtotime($order['date_added']);
 
-      $orderEHASH = btsCreateEHASH($account, $walletName, $orderId, $priceToPay, $currency);
+      $orderEHASH = btsCreateEHASH($account, $orderId, $priceToPay, $currency);
       $accumulatedAmountPaid = 0;
       if(!array_key_exists('result', $response))
       {
@@ -245,17 +245,12 @@ function btsVerifyOpenOrders($orderList, $account, $walletName, $rpcUser, $rpcPa
    return $retArray;
 
 }
-function btsValidateRPC($walletName, $account, $rpcUser, $rpcPass, $rpcPort)
+function btsValidateRPC($account, $rpcUser, $rpcPass, $rpcPort)
 {
-  if(!$walletName || $walletName == '')
-    $walletName = 'default';
-	$post_string = '{"method": "wallet_open", "params": ["'.$walletName.'"], "id": "0"}';
-	$response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);
-  if(!array_key_exists('error', $response))
-  {
-    $post_string = '{"method": "wallet_account_balance", "params": ["'.$account.'"], "id": "0"}';
-	  $response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);  
-  }
+
+  $post_string = '{"method": "wallet_account_balance", "params": ["'.$account.'"], "id": "0"}';
+	$response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);  
+  
   
   return $response;
 }
@@ -267,12 +262,8 @@ function btsValidateRPC($walletName, $account, $rpcUser, $rpcPass, $rpcPort)
  *
  * @return array
  */
-function btsGetTransactions($orderList, $walletName, $rpcUser, $rpcPass, $rpcPort)
+function btsGetTransactions($orderList, $rpcUser, $rpcPass, $rpcPort)
 {
-  if(!$walletName || $walletName == '')
-    $walletName = 'default';
-	$post_string = '{"method": "wallet_open", "params": ["'.$walletName.'"], "id": "0"}';
-	btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);
 
 	$post_string = '{"method": "wallet_account_transaction_history", "params": [], "id": "0"}';
 	$response = btsCurl('http://127.0.0.1/rpc', $post_string, $rpcUser, $rpcPass, $rpcPort);	

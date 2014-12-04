@@ -42,21 +42,18 @@ class ControllerPaymentBitShares extends Controller
     private function validate()
     {
 		require DIR_APPLICATION.'../bitshares/bts_lib.php';
-		$walletName = $this->request->post[$this->payment_module_name.'_user_wallet'];
 		$account    = $this->request->post[$this->payment_module_name.'_user_account'];
 		$rpcUser    = $this->request->post[$this->payment_module_name.'_rpc_user'];
 		$rpcPass    = $this->request->post[$this->payment_module_name.'_rpc_pass'];
 		$rpcPort    = $this->request->post[$this->payment_module_name.'_rpc_port'];
-		$response = btsValidateRPC($walletName, $account, $rpcUser, $rpcPass,$rpcPort);
+		$response = btsValidateRPC($account, $rpcUser, $rpcPass,$rpcPort);
 
         if (!$this->user->hasPermission('modify', 'payment/'.$this->payment_module_name))
         {
             $this->error['warning'] = $this->language->get('error_permission');
         }
-		if (!$this->request->post['bitshares_user_wallet']) {
-			$this->error['error'] = $this->language->get('error_user_wallet');
-		}
-		else if (!$this->request->post['bitshares_user_account']) {
+
+		if (!$this->request->post['bitshares_user_account']) {
 			$this->error['error'] = $this->language->get('error_user_account');
 		}
 		else if (!$this->request->post['bitshares_rpc_user']) {
@@ -132,13 +129,13 @@ class ControllerPaymentBitShares extends Controller
 		$data['text_cron_job_url'] = $this->language->get('text_cron_job_url');
 		$data['help_cron_job_url'] = $this->language->get('help_cron_job_url');
 		$data['text_last_cron_job_run'] = $this->language->get('text_last_cron_job_run');
-		$data['text_user_wallet'] = $this->language->get('text_user_wallet');
+
 		$data['text_user_account'] = $this->language->get('text_user_account');
 		$data['text_rpc_user'] = $this->language->get('text_rpc_user');
 		$data['text_rpc_pass'] = $this->language->get('text_rpc_pass');
 		$data['text_rpc_port'] = $this->language->get('text_rpc_port');
 		
-		$data['help_user_wallet'] = $this->language->get('help_user_wallet');
+
 		$data['help_user_account'] = $this->language->get('help_user_account');
 		$data['help_rpc_user'] = $this->language->get('help_rpc_user');
 		$data['help_rpc_pass'] = $this->language->get('help_rpc_pass');
@@ -219,13 +216,7 @@ class ControllerPaymentBitShares extends Controller
 			$data[$this->payment_module_name.'_cron_job_token'] = sha1(uniqid(mt_rand(), 1));
 		}
 		
-		if (isset($this->request->post[$this->payment_module_name.'_user_wallet'])) {
-			$data[$this->payment_module_name.'_user_wallet'] = $this->request->post[$this->payment_module_name.'_user_wallet'];
-		} elseif ($this->config->get($this->payment_module_name.'_user_wallet')) {
-			$data[$this->payment_module_name.'_user_wallet'] = $this->config->get($this->payment_module_name.'_user_wallet');
-		} else {
-			$data[$this->payment_module_name.'_user_wallet'] = 'default';
-		}			
+		
         if (isset($this->request->post[$this->payment_module_name.'_user_account']))
         {
             $data[$this->payment_module_name.'_user_account'] = $this->request->post[$this->payment_module_name.'_user_account'];

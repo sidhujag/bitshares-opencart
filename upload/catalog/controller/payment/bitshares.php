@@ -77,8 +77,8 @@ class ControllerPaymentBitShares extends Controller
         $price    = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
         $currency    = $order['currency_code'];
         $account  = $this->config->get($this->payment_module_name.'_user_account');
-        $wallet   = $this->config->get($this->payment_module_name.'_user_wallet');
-        $response = btsCreateInvoice($account, $wallet, $order['order_id'], $price, $currency);
+
+        $response = btsCreateInvoice($account, $order['order_id'], $price, $currency);
 
         $this->model_checkout_order->addOrderHistory($order['order_id'], $this->config->get($this->payment_module_name.'_invalid_status_id'), $this->language->get('text_waiting').'. Please use the code <a href="'.$response['url'].'"><b>'.$response['orderEHASH'].'</b></a> in the memo of your transaction so we can track payments towards your order', true);
         if(array_key_exists('error', $response))
@@ -111,13 +111,13 @@ class ControllerPaymentBitShares extends Controller
 				echo 'Order: ' . $order['order_id'] . '<br>';
 			}
 			require DIR_APPLICATION.'../bitshares/bts_lib.php';
-			$walletName = $this->config->get($this->payment_module_name.'_user_wallet');
+
 			$account  = $this->config->get($this->payment_module_name.'_user_account');
 			$rpcUser    = $this->config->get($this->payment_module_name.'_rpc_user');
 			$rpcPass    = $this->config->get($this->payment_module_name.'_rpc_pass');
 			$rpcPort    = $this->config->get($this->payment_module_name.'_rpc_port');
 			// sync up orders with your blockchain wallet
-			$response   = btsVerifyOpenOrders($openOrderList, $account, $walletName, $rpcUser, $rpcPass, $rpcPort, $this->config->get($this->payment_module_name.'_demo'));
+			$response   = btsVerifyOpenOrders($openOrderList, $account, $rpcUser, $rpcPass, $rpcPort, $this->config->get($this->payment_module_name.'_demo'));
 			if(array_key_exists('error', $response))
 			{
 				$log->write('CrobJob error: ' .$response['error']);
