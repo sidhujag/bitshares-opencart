@@ -8,7 +8,7 @@ Copy the contents of the upload folder into your OpenCart directory.
 # Configuration
 
 
-1. Run bitshares_client --server --rpcuser=<your rpc user setting> --rpcpass=<your rpc password setting> --httpport=<your http port setting>
+1. Run bitshares_client --server --rpcuser=[your rpc user setting] --rpcpass=[your rpc password setting] --httpport=[your http port setting]
 2. type wallet_open <your wallet name, usually default>. This will open you're wallet so you may unlock it.
 3. type wallet_unlock 9999999. This will unlock your wallet so new transactions will be posted to your wallet, which this extension will read every x minutes based on a CRON job (CRON URL available via extension settings).
 4. In the opencart administration under Extensions->Payments, click the "Install"
