@@ -97,7 +97,7 @@ function btsCreateEHASH($account,$orderId, $price, $currency)
  * changed in $options.
  *
  * $posData: this field is included in status updates or requests to get an invoice.  It is intended to be used by
- * the merchant to uniquely identify an order associated with an invoice in their system.  Aside from that, Bit-Pay does
+ * the merchant to uniquely identify an order associated with an invoice in their system.  Aside from that, Bitshares does
  * not use the data in this field.  The data in this field can be anything that is meaningful to the merchant.
  *
  * $options keys can include any of:
@@ -114,10 +114,10 @@ function btsCreateEHASH($account,$orderId, $price, $currency)
  *
  * @return array
  */
-function btsCreateInvoice($account, $orderId, $price, $currency)
+function btsCreateInvoice($account, $orderId, $amount, $price, $currency)
 {
   $memoHash = btsCreateEHASH($account, $orderId, $price,$currency);
-	$response = array('url' => btsCreatePaymentURL($account, $price, $currency, $memoHash));
+	$response = array('url' => btsCreatePaymentURL($account, $amount, $currency, $memoHash));
   $response['orderEHASH'] = $memoHash;
 	return $response;
 }
@@ -133,9 +133,9 @@ function btsGetAssetNameById($assetId, $rpcUser, $rpcPass, $rpcPort)
   }
   return $response['result']['symbol'];
 }
-function btsCreatePaymentURL($account, $price, $currency, $memoHash)
+function btsCreatePaymentURL($account, $amount, $currency, $memoHash)
 {
-  return 'bts:'.$account.'/transfer/amount/'.$price.'/asset/'.btsCurrencyToAsset($currency).'/memo/E-HASH:'.$memoHash;
+  return 'bts:'.$account.'/transfer/amount/'.$amount.'/asset/'.btsCurrencyToAsset($currency).'/memo/E-HASH:'.$memoHash;
 }
 function btsCurrencyToAsset($currency)
 {
@@ -156,7 +156,6 @@ function btsVerifyOpenOrders($orderList, $account, $rpcUser, $rpcPass, $rpcPort,
 {
    $retArray = array();
    $response =  btsGetTransactions($orderList, $rpcUser, $rpcPass, $rpcPort);
-   
    if(array_key_exists('error', $response))
    {
     return $response;
@@ -166,8 +165,9 @@ function btsVerifyOpenOrders($orderList, $account, $rpcUser, $rpcPass, $rpcPort,
       $priceToPay = $order['total'];
       $currency = $order['currency_code'];
       $asset = btsCurrencyToAsset($currency);
-      $orderTime = strtotime($order['date_added']);
-
+      $orderTime = $order['date_added'];
+      $timeStamp = 0;
+      $trxId = 0;
       $orderEHASH = btsCreateEHASH($account, $orderId, $priceToPay, $currency);
       $accumulatedAmountPaid = 0;
       if(!array_key_exists('result', $response))
@@ -182,7 +182,8 @@ function btsVerifyOpenOrders($orderList, $account, $rpcUser, $rpcPass, $rpcPort,
         // also make sure this tx is confirmed on the blockchain before processing it
         if($txinfo['is_confirmed'] == true)
         {
-	
+	        $timeStamp = $txinfo['timestamp'];
+          $trxId = $txinfo['trx_id'];
           foreach($txinfo['ledger_entries'] as $tx) {
 	
 	          //$txTime = strtotime($tx['timestamp']);
@@ -206,7 +207,6 @@ function btsVerifyOpenOrders($orderList, $account, $rpcUser, $rpcPass, $rpcPort,
               continue;
             }
             $accumulatedAmountPaid += ($tx['amount']['amount']/100000);
-            
           }
         }
       }  
@@ -219,7 +219,7 @@ function btsVerifyOpenOrders($orderList, $account, $rpcUser, $rpcPass, $rpcPort,
         $ret['amountReceived'] = $accumulatedAmountPaid;
         $ret['total'] = $priceToPay;
         $ret['orderEHASH'] = $orderEHASH;
-        
+        $ret['trxId'] = $trxId;
         // payment within 5 units of the price, ie: price = 5 BitUSD, overpayment is when 11 BitUSD is received or more.
         if($accumulatedAmountPaid > ($priceToPay+5.0))
         {

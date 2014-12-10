@@ -78,7 +78,7 @@ class ControllerPaymentBitShares extends Controller
         $currency    = $order['currency_code'];
         $account  = $this->config->get($this->payment_module_name.'_user_account');
 
-        $response = btsCreateInvoice($account, $order['order_id'], $price, $currency);
+        $response = btsCreateInvoice($account, $order['order_id'], $price, $price, $currency);
 
         $this->model_checkout_order->addOrderHistory($order['order_id'], $this->config->get($this->payment_module_name.'_invalid_status_id'), $this->language->get('text_waiting').'. Please use the code <a href="'.$response['url'].'"><b>'.$response['orderEHASH'].'</b></a> in the memo of your transaction so we can track payments towards your order', true);
         if(array_key_exists('error', $response))
