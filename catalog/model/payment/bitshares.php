@@ -39,14 +39,6 @@ class ModelPaymentBitShares extends Model
 		$order_query = $this->db->query("SELECT `order_id`, `total`, `currency_code`, `currency_value`, `date_added`  FROM `" . DB_PREFIX . "order` WHERE `order_id` = '" . $order_id . "' AND `order_status_id` = '" . $this->config->get('bitshares_confirmed_status_id')."'");
 		return $order_query->rows;
 	}	
-	public function findOrderComment($id, $comment)
-	{
-		$order_query = $this->db->query("SELECT `comment` FROM `" . DB_PREFIX . "order_history` WHERE `order_id` = '".$id."' AND `comment` = '".$comment."' LIMIT 1");
-		if($order_query->num_rows) {
-			return $order_query->row['comment'];
-		}
-		return "";
-	}
     /**
      * @param string $address
      *

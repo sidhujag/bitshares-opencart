@@ -115,22 +115,11 @@ class ControllerPaymentBitShares extends Controller
 					switch($responseOrder['status'])
 					{
 						case 'complete':
-							$order_id = $responseOrder['order_id'];
-							$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_confirmed_status_id'), $this->language->get('text_confirmed'), true);
-							break;
-						case 'processing':
-		
-							$comment = $responseOrder['amountReceived'].' '.$responseOrder['asset'] . ' received, '. ($responseOrder['total']-$responseOrder['amountReceived']).' '.$responseOrder['asset'] . ' remaining. <a href="'.$responseOrder['url'].'">Click here</a> to pay and complete your transaction.';
-							$orderComment = $this->model_payment_bitshares->findOrderComment($order_id, $comment);
-							if(strlen($orderComment) <= 0)
-							{
-								$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_processing_status_id'), $comment, true);
-							}
+							$this->model_checkout_order->addOrderHistory($responseOrder['order_id'], $this->config->get($this->payment_module_name.'_confirmed_status_id'), $this->language->get('text_confirmed'), true);
 							break;
 						case 'overpayment':
-							$order_id = $responseOrder['order_id'];
 							$comment = $this->language->get('text_confirmed'). '. There was an overpayment of '.$responseOrder['amountOverpaid'].' '.$responseOrder['asset']. ' Please contact us for a refund of the overpayment';
-							$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_confirmed_status_id'), $comment, true);
+							$this->model_checkout_order->addOrderHistory($responseOrder['order_id'], $this->config->get($this->payment_module_name.'_confirmed_status_id'), $comment, true);
 							break;
 						default:
 							break;							
@@ -316,24 +305,14 @@ class ControllerPaymentBitShares extends Controller
 				switch($responseOrder['status'])
 				{
 					case 'complete':
-						$order_id = $responseOrder['order_id'];
-						$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_confirmed_status_id'), $this->language->get('text_confirmed'), true);
-						break;
-					case 'processing':
-	
-						$comment = $responseOrder['amountReceived'].' '.$responseOrder['asset'] . ' received, '. ($responseOrder['total']-$responseOrder['amountReceived']).' '.$responseOrder['asset'] . ' remaining. <a href="'.$responseOrder['url'].'">Click here</a> to pay and complete your transaction.';
-						$orderComment = $this->model_payment_bitshares->findOrderComment($order_id, $comment);
-						if(strlen($orderComment) <= 0)
-						{
-							$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_processing_status_id'), $comment, true);
-						}
+						$this->model_checkout_order->addOrderHistory($responseOrder['order_id'], $this->config->get($this->payment_module_name.'_confirmed_status_id'), $this->language->get('text_confirmed'), true);
 						break;
 					case 'overpayment':
-						$order_id = $responseOrder['order_id'];
 						$comment = $this->language->get('text_confirmed'). '. There was an overpayment of '.$responseOrder['amountOverpaid'].' '.$responseOrder['asset']. ' Please contact us for a refund of the overpayment';
-						$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_confirmed_status_id'), $comment, true);
+						$this->model_checkout_order->addOrderHistory($responseOrder['order_id'], $this->config->get($this->payment_module_name.'_confirmed_status_id'), $comment, true);
 						break;						
-						
+					default:
+						break;							
 				}
 				 
 			}
