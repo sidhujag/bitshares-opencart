@@ -256,14 +256,6 @@ class ControllerPaymentBitShares extends Controller
 			$invoiceURL = btsCreateInvoice($accountName, $order_id, $memo);
 			
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_processing_status_id'), $this->language->get('text_waiting').'. <a href="'.$invoiceURL.'">Click here</a> to pay and complete your transaction.', true);
-			if(array_key_exists('error', $response))
-			{
-				$this->log("communication error");
-				$this->log(var_export($response['error'], true));
-				die(json_encode($response));
-	            
-			}
-    
 			$ret['memo'] = $memo;
 		}		
         die(json_encode($ret));
