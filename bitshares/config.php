@@ -1,6 +1,6 @@
 <?php
 define('ROOT', __DIR__ .DIRECTORY_SEPARATOR);
-$baseURL = 'http://bitshares.cloudapp.net/opencart/';
+$baseURL = 'http://www.bitsharesdemo.com/opencart/';
 $accountName = 'opencartdemo';
 $rpcUser = 'user';
 $rpcPass = 'pass';
