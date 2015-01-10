@@ -1,5 +1,5 @@
 <?php
-function sendToCartHelper($url)
+function sendToCart($url)
 {
 	global $baseURL;
 	$ch = curl_init($baseURL.$url);
@@ -10,23 +10,32 @@ function sendToCartHelper($url)
 	if ($response === false){
 		debuglog('request to opencart failed');
 		debuglog('Error: "' . curl_error($ch) . '" - Code: ' . curl_errno($ch));
-	}
+    $res = array();
+    $res['error'] = curl_error($ch);
+    curl_close($ch);
+    return $res;
+  }
 			
 	curl_close($ch);
 	return json_decode($response, true);
 }
-function isOrderComplete($memo, $order_id)
+function getOpenOrdersUser()
 {
-	$response = sendToCartHelper('index.php?route=payment/bitshares/getordercomplete&memo='.$memo.'&order_id='.$order_id);
+	return sendToCart('index.php?route=payment/bitshares/getorders');
+}
+
+function isOrderCompleteUser($memo, $order_id)
+{
+	$response = sendToCart('index.php?route=payment/bitshares/getordercomplete&memo='.$memo.'&order_id='.$order_id);
 	if(isset($response['order_id']))
 	{
 		return $response;
 	}
 	return FALSE;	
 }
-function doesOrderExist($memo, $order_id)
+function doesOrderExistUser($memo, $order_id)
 {
-	$response = sendToCartHelper('index.php?route=payment/bitshares/getorder&memo='.$memo.'&order_id='.$order_id);
+	$response = sendToCart('index.php?route=payment/bitshares/getorder&memo='.$memo.'&order_id='.$order_id);
 	if(isset($response['order_id']))
 	{
 		return $response;
@@ -34,11 +43,11 @@ function doesOrderExist($memo, $order_id)
 	return FALSE;
 }
 
-function completeOrderUser($memo, $order_id)
+function completeOrderUser($order)
 {
 
 	global $baseURL;
-	$response = sendToCartHelper('index.php?route=payment/bitshares/complete&memo='.$memo.'&order_id='.$order_id);
+	$response = sendToCart('index.php?route=payment/bitshares/complete&memo='.$order['memo'].'&order_id='.$order['order_id']);
 	if(array_key_exists('error', $response))
 	{	
 		$response['error'] = 'OpenCart could not complete this order!';	
@@ -46,10 +55,9 @@ function completeOrderUser($memo, $order_id)
 	}	
 	return $response;
 }
-function cancelOrderUser($memo, $order_id)
+function cancelOrderUser($order)
 {
-	global $baseURL;
-	$response = sendToCartHelper('index.php?route=payment/bitshares/cancel&memo='.$memo.'&order_id='.$order_id);
+	$response = sendToCart('index.php?route=payment/bitshares/cancel&memo='.$order['memo'].'&order_id='.$order['order_id']);
 	if(array_key_exists('error', $response))
 	{	
 		$response['error'] = 'OpenCart could not cancel this order!';	
@@ -59,14 +67,13 @@ function cancelOrderUser($memo, $order_id)
 }
 function cronJobUser()
 {
-	global $cronToken;
-	return sendToCartHelper('index.php?route=payment/bitshares/cron&token='.$cronToken);	
+	return 'Success!';
 }
 function createOrderUser()
 {
 
 	global $accountName;
-	$response = sendToCartHelper('index.php?route=payment/bitshares/create&order_id='.$_REQUEST['order_id']);
+	$response = sendToCart('index.php?route=payment/bitshares/create&order_id='.$_REQUEST['order_id']);
 	if(array_key_exists('error', $response) || !isset($response['memo']))
 	{	
 		$response['error'] = 'OpenCart could not create this order!';		

@@ -131,7 +131,27 @@ class ControllerPaymentBitShares extends Controller
 		}
 		$response['url'] = $this->url->link('checkout/success', '', 'SSL');	
 		die(json_encode($response));
+	}
+	public function getorders()
+	{
+		$response = array();
+		
+		require DIR_APPLICATION.'../bitshares/config.php';
+		require DIR_APPLICATION.'../bitshares/bts_lib.php';	
+		$this->load->model('payment/bitshares');
+		
+		$orders = $this->model_payment_bitshares->getOpenOrders();
+		foreach ($orders as $order) {
+			$myorder = array();
+			$myorder['order_id'] = $order['order_id'];
+			$myorder['asset'] = btsCurrencyToAsset($order['currency_code']);
+			$myorder['total'] = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
+			$myorder['date_added'] = 0;
+			array_push($response,$myorder);
+		}			
+		die(json_encode($response));
 	}	
+		
 	public function getorder()
 	{
 		$response = array();
@@ -260,54 +280,4 @@ class ControllerPaymentBitShares extends Controller
 		}		
         die(json_encode($ret));
     }
-    // todo add autodelete orders based on a time setting in config
-	public function cron() {
-		require DIR_APPLICATION.'../bitshares/config.php';
-		require DIR_APPLICATION.'../bitshares/bts_lib.php';	
-		// use server token for cron jobs for security reasons.. sanity against a ddos
-		if (isset($this->request->get['token']) && $this->request->get['token'] == $cronToken && $this->config->get($this->payment_module_name.'_status') == 1) {
-			$log = new Log('bitshares.log');
-			
-			$this->load->model('checkout/order');
-			$this->load->model('payment/bitshares');
-			$this->language->load('payment/'.$this->payment_module_name);
-			$openOrderList = array();
-			$openOrders = $this->model_payment_bitshares->getOpenOrders();
-			foreach ($openOrders as $order) {
-				$order['total'] = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-				
-				array_push($openOrderList,$order);
-				echo 'Order: ' . $order['order_id'] . '<br>';
-			}
-
-			$demo = FALSE;
-			if($demoMode == "1" || $demoMode == 1 || $demoMode == "true" || $demoMode == TRUE)
-			{
-				$demo = TRUE;
-			}
-			// sync up orders with your blockchain wallet
-			$response   = btsVerifyOpenOrders($openOrderList, $accountName, $rpcUser, $rpcPass, $rpcPort, $hashSalt, $demo);
-			if(array_key_exists('error', $response))
-			{
-				$log->write('CrobJob error: ' .$response['error']);
-				return;
-			}
-			foreach ($response as $responseOrder) {
-				// update the order based on response status (processing for partial funds and complete for full funds)	
-				switch($responseOrder['status'])
-				{
-					case 'complete':
-						$this->model_checkout_order->addOrderHistory($responseOrder['order_id'], $this->config->get($this->payment_module_name.'_confirmed_status_id'), $this->language->get('text_confirmed'), true);
-						break;
-					case 'overpayment':
-						$comment = $this->language->get('text_confirmed'). '. There was an overpayment of '.$responseOrder['amountOverpaid'].' '.$responseOrder['asset']. ' Please contact us for a refund of the overpayment';
-						$this->model_checkout_order->addOrderHistory($responseOrder['order_id'], $this->config->get($this->payment_module_name.'_confirmed_status_id'), $comment, true);
-						break;						
-					default:
-						break;							
-				}
-				 
-			}
-		}
-	}	
 }
