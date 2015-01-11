@@ -267,15 +267,20 @@ class ControllerPaymentBitShares extends Controller
 			$this->load->model('checkout/order');
 			 
 			$order_id = $this->request->get['order_id'];
-			$order    = $this->model_checkout_order->getOrder($order_id);		
+			$order    = $this->model_checkout_order->getOrder($order_id);
+
 			$total    = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
 			$asset    = btsCurrencyToAsset($order['currency_code']);
 			
 			$hash = btsCreateEHASH($accountName, $order_id, $total,$asset, $hashSalt);
 			$memo = btsCreateMemo($hash);
 			$invoiceURL = btsCreateInvoice($accountName, $order_id, $memo);
-			
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_processing_status_id'), $this->language->get('text_waiting').'. <a href="'.$invoiceURL.'">Click here</a> to pay and complete your transaction.', true);
+			if($order['order_status_id'] !== $this->config->get($this->payment_module_name.'_processing_status_id')
+			&&  $order['order_status_id'] !== $this->config->get($this->payment_module_name.'_confirmed_status_id'))
+			{				
+				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get($this->payment_module_name.'_processing_status_id'), $this->language->get('text_waiting').'. <a href="'.$invoiceURL.'">Click here</a> to pay and complete your transaction.', true);
+				
+			}
 			$ret['memo'] = $memo;
 		}		
         die(json_encode($ret));

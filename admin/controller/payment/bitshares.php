@@ -143,7 +143,7 @@ class ControllerPaymentBitShares extends Controller
 		} elseif ($this->config->get($this->payment_module_name.'_invalid_status_id')) {
 			$data[$this->payment_module_name.'_invalid_status_id'] = $this->config->get($this->payment_module_name.'_invalid_status_id');
 		} else {
-			$data[$this->payment_module_name.'_invalid_status_id'] = 1;
+			$data[$this->payment_module_name.'_invalid_status_id'] = 0;
 		}
 		if (isset($this->request->post[$this->payment_module_name.'_confirmed_status_id'])) {
 			$data[$this->payment_module_name.'_confirmed_status_id'] = $this->request->post[$this->payment_module_name.'_confirmed_status_id'];

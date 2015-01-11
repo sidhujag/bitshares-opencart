@@ -50,7 +50,8 @@ function completeOrderUser($order)
 	$response = sendToCart('index.php?route=payment/bitshares/complete&memo='.$order['memo'].'&order_id='.$order['order_id']);
 	if(array_key_exists('error', $response))
 	{	
-		$response['error'] = 'OpenCart could not complete this order!';	
+		$response['error'] = 'OpenCart could not complete this order!';
+		$response['url'] = NULL;
 		return $response;
 	}	
 	return $response;
@@ -60,7 +61,8 @@ function cancelOrderUser($order)
 	$response = sendToCart('index.php?route=payment/bitshares/cancel&memo='.$order['memo'].'&order_id='.$order['order_id']);
 	if(array_key_exists('error', $response))
 	{	
-		$response['error'] = 'OpenCart could not cancel this order!';	
+		$response['error'] = 'OpenCart could not cancel this order!';
+		$response['url'] = NULL;	
 		return $response;
 	}	
 	return $response;
