@@ -3,16 +3,16 @@ bitshares-opencart
 
 # Installation
 
-1. Copy these files into your OpenCart root directory
-2. Copy Bitshares Checkout (https://github.com/sidhujag/bitsharescheckout) files into your OpenCart root directory, overwrite any existing files.
+1. Copy these files into your OpenCart root directory<br />
+2. Copy Bitshares Checkout (https://github.com/sidhujag/bitsharescheckout) files into your OpenCart root directory, overwrite any existing files.<br />
 
 # Configuration
 
-1. Fill out config.php with appropriate information and configure Bitshares Checkout
+1. Fill out config.php with appropriate information and configure Bitshares Checkout<br />
     - See the readme at https://github.com/sidhujag/bitsharescheckout
 2. In the opencart administration under Extensions->Payments, click the "Install"
-   link on the Bitshares row.
-3. Also under Extensions->Payments, click the "Edit" link on the Bitshares row.
+   link on the Bitshares row.<br />
+3. Also under Extensions->Payments, click the "Edit" link on the Bitshares row.<br />
 4. Set the status to enabled (this activates the bitshares payment extension and 
     enabled shoppers to select the bitshares payment method).
 
@@ -40,7 +40,7 @@ To contribute to this project, please fork and submit a pull request.
 
 The MIT License (MIT)
 
-Copyright (c) 2011-2014 Bitshares
+Copyright (c) 2011-2015 Bitshares
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -62,5 +62,4 @@ THE SOFTWARE.
 
 Version
 -------
-- Bitshares plugin version 1.0
 - Tested against OpenCart Version 2.0.1.1
