@@ -1,8 +1,7 @@
 <?php
 function sendToCart($url)
 {
-	global $baseURL;
-	$ch = curl_init($baseURL.$url);
+	$ch = curl_init(baseURL.$url);
 	
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_TIMEOUT, '15');
@@ -46,7 +45,6 @@ function doesOrderExistUser($memo, $order_id)
 function completeOrderUser($order)
 {
 
-	global $baseURL;
 	$response = sendToCart('index.php?route=payment/bitshares/complete&memo='.$order['memo'].'&order_id='.$order['order_id']);
 	if(array_key_exists('error', $response))
 	{	
@@ -74,7 +72,6 @@ function cronJobUser()
 function createOrderUser()
 {
 
-	global $accountName;
 	$response = sendToCart('index.php?route=payment/bitshares/create&order_id='.$_REQUEST['order_id']);
 	if(array_key_exists('error', $response) || !isset($response['memo']))
 	{	
@@ -82,7 +79,7 @@ function createOrderUser()
 		return $response;
 	}	
 	$ret = array(
-		'accountName'     => $accountName,
+		'accountName'     => accountName,
 		'order_id'     => $_REQUEST['order_id'],
 		'memo'     => $response['memo']
 	);

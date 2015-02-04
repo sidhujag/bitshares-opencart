@@ -81,7 +81,7 @@ class ControllerPaymentBitShares extends Controller
 			
 				$total    = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
 				$asset    = btsCurrencyToAsset($order['currency_code']);
-				$hash = btsCreateEHASH($accountName, $order_id, $total,$asset, $hashSalt);
+				$hash = btsCreateEHASH(accountName, $order_id, $total,$asset, hashSalt);
 				$memoSanity = btsCreateMemo($hash);
 				if($memoSanity !== $memo)
 				{
@@ -90,7 +90,7 @@ class ControllerPaymentBitShares extends Controller
 				  die(json_encode($ret));
 				}
 				$demo = FALSE;
-				if($demoMode == "1" || $demoMode == 1 || $demoMode == "true" || $demoMode == TRUE)
+				if(demoMode == "1" || demoMode == 1 || demoMode == "true" || demoMode == TRUE)
 				{
 					$demo = TRUE;
 				}
@@ -103,7 +103,7 @@ class ControllerPaymentBitShares extends Controller
 				$orderArray = array();
 				array_push($orderArray, $myorder);
 				// sync up orders with your blockchain wallet
-				$response   = btsVerifyOpenOrders($orderArray, $accountName, $rpcUser, $rpcPass, $rpcPort,$hashSalt, $demo);
+				$response   = btsVerifyOpenOrders($orderArray, accountName, rpcUser, rpcPass, rpcPort,hashSalt, $demo);
 				if(array_key_exists('error', $response))
 				{
 				  $ret = array();
@@ -167,7 +167,7 @@ class ControllerPaymentBitShares extends Controller
 				$myorder['order_id'] = $this->request->get['order_id'];
 				$myorder['asset'] = btsCurrencyToAsset($order['currency_code']);
 				$myorder['total'] = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-				$hash = btsCreateEHASH($accountName,$myorder['order_id'],  $myorder['total'], $myorder['asset'], $hashSalt);
+				$hash = btsCreateEHASH(accountName,$myorder['order_id'],  $myorder['total'], $myorder['asset'], hashSalt);
 				$memo = btsCreateMemo($hash);
 				$myorder['memo'] = $memo;
 				$myorder['date_added'] = 0;
@@ -197,7 +197,7 @@ class ControllerPaymentBitShares extends Controller
 				$myorder['order_id'] = $this->request->get['order_id'];
 				$myorder['asset'] = btsCurrencyToAsset($order['currency_code']);
 				$myorder['total'] = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-				$hash = btsCreateEHASH($accountName,$myorder['order_id'],  $myorder['total'], $myorder['asset'], $hashSalt);
+				$hash = btsCreateEHASH(accountName,$myorder['order_id'],  $myorder['total'], $myorder['asset'], hashSalt);
 				$memo = btsCreateMemo($hash);
 				$myorder['memo'] = $memo;
 				if($memo === $this->request->get['memo'])
@@ -228,7 +228,7 @@ class ControllerPaymentBitShares extends Controller
 			foreach ($orders as $order) {
 				$total    = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
 				$asset    = btsCurrencyToAsset($order['currency_code']);
-				$hash = btsCreateEHASH($accountName, $order_id, $total,$asset, $hashSalt);
+				$hash = btsCreateEHASH(accountName, $order_id, $total,$asset, hashSalt);
 				$memoSanity = btsCreateMemo($hash);
 				if($memoSanity === $memo)
 				{			
@@ -272,9 +272,9 @@ class ControllerPaymentBitShares extends Controller
 			$total    = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
 			$asset    = btsCurrencyToAsset($order['currency_code']);
 			
-			$hash = btsCreateEHASH($accountName, $order_id, $total,$asset, $hashSalt);
+			$hash = btsCreateEHASH(accountName, $order_id, $total,$asset, hashSalt);
 			$memo = btsCreateMemo($hash);
-			$invoiceURL = btsCreateInvoice($accountName, $order_id, $memo);
+			$invoiceURL = btsCreateInvoice(accountName, $order_id, $memo);
 			if($order['order_status_id'] !== $this->config->get($this->payment_module_name.'_processing_status_id')
 			&&  $order['order_status_id'] !== $this->config->get($this->payment_module_name.'_confirmed_status_id'))
 			{				
