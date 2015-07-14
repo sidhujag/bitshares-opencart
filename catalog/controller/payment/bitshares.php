@@ -99,7 +99,7 @@ class ControllerPaymentBitShares extends Controller
 				$myorder['total'] = $total;
 				$myorder['asset'] = $asset;
 				$myorder['memo'] = $memo;
-				$myorder['date_added'] = 0;
+				$myorder['date_added'] = $order['date_added'];
 				$orderArray = array();
 				array_push($orderArray, $myorder);
 				// sync up orders with your blockchain wallet
@@ -146,7 +146,7 @@ class ControllerPaymentBitShares extends Controller
 			$myorder['order_id'] = $order['order_id'];
 			$myorder['asset'] = btsCurrencyToAsset($order['currency_code']);
 			$myorder['total'] = $this->currency->format($order['total'], $order['currency_code'], $order['currency_value'], false);
-			$myorder['date_added'] = 0;
+			$myorder['date_added'] = $order['date_added'];
 			array_push($response,$myorder);
 		}			
 		die(json_encode($response));
@@ -170,7 +170,7 @@ class ControllerPaymentBitShares extends Controller
 				$hash = btsCreateEHASH(accountName,$myorder['order_id'],  $myorder['total'], $myorder['asset'], hashSalt);
 				$memo = btsCreateMemo($hash);
 				$myorder['memo'] = $memo;
-				$myorder['date_added'] = 0;
+				$myorder['date_added'] = $order['date_added'];
 				if($memo === $this->request->get['memo'])
 				{
 					die(json_encode($myorder));
